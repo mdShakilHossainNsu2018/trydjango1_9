@@ -1,0 +1,17 @@
+{% extends 'posts/base.html' %}
+
+{% block title %} index {% endblock %}
+
+{% block content %}
+<h1>Home Page</h1>
+{% for obj in object_lists %}
+<a href='{{ obj.get_absolute_url }}'>{{ obj.title }}</a><br/>
+{{ obj.content }}<br/>
+{{ obj.timestamp }}<br/>
+{{ obj.updated }}<br/>
+{{ obj.id }}<br/>
+
+{% endfor %}
+
+
+{% endblock %}

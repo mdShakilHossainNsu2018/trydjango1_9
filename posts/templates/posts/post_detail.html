@@ -1,0 +1,78 @@
+{% extends "posts/base.html" %}
+{% load urlify %}
+
+{% block head_title %}
+    {{ instance.title }} | {{ block.super }}
+{% endblock head_title %}
+
+
+
+{% block content %}
+
+    <div class="container">
+
+
+    <div class="card">
+    {% if instance.image %}
+        <img  class="card-img-top img-responsive" style="padding: 1.5rem" src="{{ instance.image.url }}" alt="{{ instance.image.url }}">
+    {% endif %}
+    {% if  instance.user.get_full_name%}
+        <h3 class="text-capitalize text-lg-center ">Author: {{ instance.user.get_full_name }}</h3>
+    {% endif %}
+    <div class="card-body">
+        <h1 class="card-title">{{ title }}
+            <small>{% if instance.draft %}<span style='color:red;'>Draft</span> {% endif %}{{ instance.publish }}</small>
+        </h1>
+
+
+
+
+        {{ instance.content|linebreaks }}<br/>
+        <hr>
+        <hr>
+        <div class="fb-like" data-href="{{ request.build_absolute_uri }}" data-width="" data-layout="standard" data-action="like" data-size="large" data-show-faces="true" data-share="true"></div>
+        <div class="d-flex">
+            <div class="mr-auto p-2">
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
+     <i class="fa fa-facebook-square fa-3x" aria-hidden="true"></i>
+    </a>
+
+    <a href="https://twitter.com/home?status={{ instance.content|truncatechars:80|urlify }}%20{{ request.build_absolute_uri }}">
+    <i class="fa fa-twitter-square fa-3x" aria-hidden="true"></i>
+    </a>
+
+    <a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'></a>
+
+
+<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ instance.title }}&summary={{ share_string }}&source={{ request.build_absolute_uri }}">
+<i class="fa fa-linkedin-square fa-3x" aria-hidden="true"></i>
+</a>
+
+<a href="http://www.reddit.com/submit?url={{ request.build_absolute_uri }}&title={{ share_string }}."><i class="fa fa-reddit-square fa-3x" aria-hidden="true"></i></a>
+
+            </div>
+
+                    <div class="d-flex p-2">
+            <form action="{% url 'posts:delete' instance.slug %}">
+              <button class="btn btn-danger mr-2">Delete</button>
+          </form>
+
+        <form action="{% url 'posts:update' instance.slug %}">
+              <button class="btn btn-info ">Edit</button>
+          </form>
+        </div>
+
+        </div>
+
+        <hr>
+{#    facebook comment#}
+{#        <h1>{{ request.build_absolute_uri }}</h1>#}
+        <div class="d-flex justify-content-end">
+            <div class="fb-comments" data-href="{{ request.build_absolute_uri }}" data-width="60rem" data-numposts="5"></div>
+        </div>
+
+
+    </div>
+    </div>
+</div>
+{% endblock content %}

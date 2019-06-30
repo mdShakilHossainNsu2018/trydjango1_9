@@ -1,0 +1,119 @@
+{% extends "posts/base.html" %}
+{% block content %}
+
+
+<div class='col-sm-6 col-sm-offset-3'>
+    <h1>{{ title }}</h1>
+
+{% for obj in contacts %}
+<div class="card" style="width: 65rem;">
+    <div class="thumbnail">
+      {% if obj.image %}
+        <img class="card-img-top" style="height: 30rem; padding: 1.5rem" src="{{ obj.image.url }}" alt="{{ obj.image.url }}">
+    {% endif %}
+      <div class="card-body">
+      {% if obj.draft %}<h3>Staff only: Draft</h3>{% endif %} {% if obj.publish > today %}<h3>Staff Only: Future Post</h3>{% endif %}
+
+        <h1 class="card-title"><a href='{{ obj.get_absolute_url }}'>{{ obj.title }}</a> <small>{{ obj.timestamp|timesince }} ago</small></h1>
+          {% if  obj.user.get_full_name%}
+        <h3 class="text-capitalize text-lg-center ">Author: {{ obj.user.get_full_name }}</h3>
+    {% endif %}
+          <p>{{ obj.content|linebreaks|truncatechars:120 }}</p>
+
+          <h1>{{ obj.id }}</h1>
+          <div class="d-flex justify-content-end">
+              <div class="p-2">
+        <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a></p>
+              </div>
+              <div class="p-2">
+          <form action="{% url 'posts:delete' obj.slug %}">
+              <button class="btn btn-danger">Delete</button>
+          </form>
+              </div>
+              <div class="p-2">
+          <form action="{% url 'posts:update' obj.slug %}">
+              <button class="btn btn-info">Edit</button>
+          </form>
+              </div>
+          </div>
+      </div>
+    </div>
+
+<hr/>
+</div>
+{% endfor %}
+
+
+
+<span class="current">
+            Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
+        </span>
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+{#    <span class="step-links">#}
+        {% if contacts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo; first</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ contacts.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a></li>
+
+        {% endif %}
+
+    {% if  contacts.paginator.num_pages > 6  %}
+
+        {% if contacts.number > 3 %}
+            {% for i in pagenum %}
+                {% if i <= contacts.paginator.num_pages%}
+                    {% if contacts.number == i %}
+        <li class="active page-item"><span class="page-link" >{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a></li>
+      {% endif %}
+                {% endif %}
+
+        {% endfor %}
+
+            {% else %}
+                {% for i in contacts.paginator.page_range %}
+      {% if contacts.number == i %}
+        <li class="active page-item"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+            {% endif %}
+    {% else %}
+
+
+    {% for i in contacts.paginator.page_range %}
+      {% if contacts.number == i %}
+        <li class="active page-item"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a></li>
+
+      {% endif %}
+
+
+    {% endfor %}
+    {% endif %}
+
+
+
+{#    <li class="page-item"><a class="page-link" href="#">1</a></li>#}
+{#    <li class="page-item"><a class="page-link" href="#">2</a></li>#}
+{#    <li class="page-item"><a class="page-link" href="#">3</a></li>#}
+
+        {% if contacts.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ contacts.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ contacts.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">last &raquo;</a></li>
+        {% endif %}
+{#    </span>#}
+</ul>
+
+</nav>
+
+
+
+
+</div>
+
+{% endblock content %}
